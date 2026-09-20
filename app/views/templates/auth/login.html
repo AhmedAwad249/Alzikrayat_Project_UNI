@@ -1,0 +1,95 @@
+{% extends "layout/base.html" %}
+
+{% block title %}
+Login - Alzikrayat
+{% endblock %}
+
+
+{% block content %}
+
+<h1>Welcome Back</h1>
+
+<p>
+    Login to your account.
+</p>
+
+
+{% if lastLogin %}
+
+    <p>
+        Last login from this computer was:
+        <strong>{{ lastLogin }}</strong>
+    </p>
+
+{% endif %}
+
+
+{% if errors.get("login") %}
+
+    <p>
+        {{ errors.get("login") }}
+    </p>
+
+{% endif %}
+
+
+<form
+    id="loginForm"
+    action="/login"
+    method="POST"
+>
+
+    <div>
+        <label for="loginEmail">
+            Email
+        </label>
+
+        <input
+            id="loginEmail"
+            name="email"
+            type="email"
+            maxlength="100"
+            value="{{ formData.get('email', '') }}"
+            required
+        >
+
+        {% if errors.get("email") %}
+            <p>{{ errors.get("email") }}</p>
+        {% endif %}
+    </div>
+
+
+    <div>
+        <label for="loginPassword">
+            Password
+        </label>
+
+        <input
+            id="loginPassword"
+            name="password"
+            type="password"
+            required
+        >
+
+        {% if errors.get("password") %}
+            <p>{{ errors.get("password") }}</p>
+        {% endif %}
+    </div>
+
+
+    <button type="submit">
+        Login
+    </button>
+
+</form>
+
+
+<p>
+    Don't have an account?
+
+    <a href="/register">
+        Register
+    </a>
+</p>
+
+{% endblock %}

@@ -1,26 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout/base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block title %}
+Alzikrayat
+{% endblock %}
 
-    <title>Alzikrayat</title>
-</head>
 
-<body>
+{% block content %}
 
-    <h1>Alzikrayat</h1>
+<h1>Alzikrayat</h1>
 
-    <p>Share your memories.</p>
+<p>
+    Share your memories.
+</p>
+
+<p>
+    {{ userCount }} registered users
+</p>
+
+
+{% if session.get("userId") %}
 
     <p>
-        {{ userCount }} registered users
+        Welcome back,
+        {{ session.get("firstName") }}.
     </p>
 
-</body>
+{% else %}
 
-</html>
+    <a href="/register">
+        Get Started
+    </a>
+
+{% endif %}
+
+{% endblock %}
