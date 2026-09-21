@@ -37,9 +37,12 @@
     </p>
 
 
-    <p>
-        {{ photo.date_time }}
-    </p>
+    <time
+        datetime="{{ photo.date_time }}"
+        title="{{ photo.date_time }}"
+    >
+        {{ photo.date_time | timeAgo }}
+    </time>
 
 
     {% if photo.description %}
@@ -72,10 +75,94 @@
 </article>
 
 
-<h2>Comments</h2>
+<section id="comments">
 
-<p>
-    Comments will be added in the next phase.
-</p>
+    <h2>
+        Comments
+    </h2>
+
+    {% if session.get("userId") %}
+
+        <form
+            class="commentForm"
+            action="/photo/{{ photo.id }}/comment"
+            method="POST"
+        >
+
+            <textarea
+                name="comment"
+                maxlength="1000"
+                placeholder="Write a comment..."
+                required
+            ></textarea>
+
+            {% if commentErrors.get("comment") %}
+
+                <p>
+                    {{ commentErrors.get("comment") }}
+                </p>
+
+            {% endif %}
+
+            <button type="submit">
+                Post Comment
+            </button>
+
+        </form>
+
+    {% else %}
+
+        <p>
+            <a href="/login">
+                Login
+            </a>
+            to write a comment.
+        </p>
+
+    {% endif %}
+
+    {% if comments %}
+
+        <div>
+
+            {% for item in comments %}
+
+                <article>
+
+                    <div>
+
+                        <strong>
+                            {{ item.first_name }}
+                            {{ item.last_name }}
+                        </strong>
+
+                        <time
+                            datetime="{{ item.date_time }}"
+                            title="{{ item.date_time }}"
+                        >
+                            {{ item.date_time | timeAgo }}
+                        </time>
+
+                    </div>
+
+                    <p>
+                        {{ item.comment }}
+                    </p>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p>
+            No comments yet.
+        </p>
+
+    {% endif %}
+
+</section>
 
 {% endblock %}

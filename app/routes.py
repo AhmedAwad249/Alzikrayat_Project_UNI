@@ -63,6 +63,15 @@ def registerRoutes(app):
 
 
     @app.route(
+        "/photo/<int:photoId>/comment",
+        methods=["POST"]
+    )
+    def storeComment(photoId):
+        from app.controllers.comment_controller import CommentController
+        return CommentController.store(photoId)
+
+
+    @app.route(
         "/photo/<int:photoId>/delete",
         methods=["POST"]
     )

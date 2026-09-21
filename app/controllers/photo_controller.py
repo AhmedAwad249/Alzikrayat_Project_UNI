@@ -12,6 +12,7 @@ from flask import (
 
 from werkzeug.utils import secure_filename
 
+from app.models.comment import Comment
 from app.models.photo import Photo
 from app.validators.photo_validator import PhotoValidator
 
@@ -32,16 +33,20 @@ class PhotoController:
 
     @staticmethod
     def show(photoId):
-        """Display one photo and its metadata."""
+        """Display one photo and its comments."""
 
         photo = Photo.findById(photoId)
 
         if not photo:
             abort(404)
 
+        comments = Comment.getByPhoto(photoId)
+
         return render_template(
             "photos/show.html",
-            photo=photo
+            photo=photo,
+            comments=comments,
+            commentErrors={}
         )
 
     @staticmethod

@@ -60,3 +60,38 @@ if (loginForm) {
     );
 
 }
+
+
+const commentForms =
+    document.querySelectorAll(
+        ".commentForm"
+    );
+
+commentForms.forEach(function (form) {
+
+    form.addEventListener(
+        "submit",
+        function (event) {
+
+            const commentField =
+                form.querySelector(
+                    "textarea[name='comment']"
+                );
+
+            const comment =
+                commentField.value.trim();
+
+            if (!comment) {
+
+                event.preventDefault();
+
+                alert(
+                    "Comment cannot be empty."
+                );
+
+            }
+
+        }
+    );
+
+});

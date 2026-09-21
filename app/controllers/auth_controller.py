@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import (
     make_response,
@@ -150,9 +150,9 @@ class AuthController:
             redirect("/")
         )
 
-        currentLogin = datetime.now().strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
+        currentLogin = datetime.now(
+            timezone.utc
+        ).isoformat()
 
         response.set_cookie(
             "lastLogin",
