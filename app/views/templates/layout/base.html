@@ -37,6 +37,13 @@
             </a>
 
             {% if session.get("userId") %}
+            <a href="/photo/upload">
+    Upload
+</a>
+
+<a href="/my-photos">
+    My Photos
+</a>
 
                 <span>
                     Hi {{ session.get("firstName") }}

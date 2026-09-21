@@ -1,0 +1,72 @@
+{% extends "layout/base.html" %}
+
+
+{% block title %}
+My Photos - Alzikrayat
+{% endblock %}
+
+
+{% block content %}
+
+<h1>My Photos</h1>
+
+
+<a href="/photo/upload">
+    Upload Photo
+</a>
+
+
+{% if photos %}
+
+    {% for photo in photos %}
+
+        <article>
+
+            <a href="/photo/{{ photo.id }}">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='uploads/' ~ photo.file_name
+                    ) }}"
+                    alt="{{ photo.title }}"
+                    width="250"
+                >
+
+            </a>
+
+
+            <h2>
+                {{ photo.title }}
+            </h2>
+
+
+            <p>
+                {{ photo.date_time }}
+            </p>
+
+
+            <form
+                action="/photo/{{ photo.id }}/delete"
+                method="POST"
+            >
+
+                <button type="submit">
+                    Delete
+                </button>
+
+            </form>
+
+        </article>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>
+        You have not uploaded any photos yet.
+    </p>
+
+{% endif %}
+
+{% endblock %}

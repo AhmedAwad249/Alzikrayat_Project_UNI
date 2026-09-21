@@ -1,0 +1,81 @@
+{% extends "layout/base.html" %}
+
+
+{% block title %}
+{{ photo.title }} - Alzikrayat
+{% endblock %}
+
+
+{% block content %}
+
+<a href="/photos">
+    Back to Photos
+</a>
+
+
+<article>
+
+    <img
+        src="{{ url_for(
+            'static',
+            filename='uploads/' ~ photo.file_name
+        ) }}"
+        alt="{{ photo.title }}"
+        width="600"
+    >
+
+
+    <h1>
+        {{ photo.title }}
+    </h1>
+
+
+    <p>
+        Uploaded by
+        {{ photo.first_name }}
+        {{ photo.last_name }}
+    </p>
+
+
+    <p>
+        {{ photo.date_time }}
+    </p>
+
+
+    {% if photo.description %}
+
+        <p>
+            {{ photo.description }}
+        </p>
+
+    {% endif %}
+
+
+    {% if
+        session.get("userId")
+        == photo.user_id
+    %}
+
+        <form
+            action="/photo/{{ photo.id }}/delete"
+            method="POST"
+        >
+
+            <button type="submit">
+                Delete Photo
+            </button>
+
+        </form>
+
+    {% endif %}
+
+</article>
+
+
+<h2>Comments</h2>
+
+<p>
+    Comments will be added in the next phase.
+</p>
+
+{% endblock %}

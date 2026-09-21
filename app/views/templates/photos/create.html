@@ -1,0 +1,81 @@
+{% extends "layout/base.html" %}
+
+
+{% block title %}
+Upload Photo - Alzikrayat
+{% endblock %}
+
+
+{% block content %}
+
+<h1>Upload a New Photo</h1>
+
+<form
+    action="/photo/store"
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+    <div>
+        <label for="photo">
+            Image
+        </label>
+
+        <input
+            id="photo"
+            name="photo"
+            type="file"
+            accept=".jpg,.jpeg,.png,.webp"
+            required
+        >
+
+        {% if errors.get("photo") %}
+            <p>{{ errors.get("photo") }}</p>
+        {% endif %}
+    </div>
+
+
+    <div>
+        <label for="title">
+            Title
+        </label>
+
+        <input
+            id="title"
+            name="title"
+            type="text"
+            maxlength="200"
+            value="{{ formData.get('title', '') }}"
+            required
+        >
+
+        {% if errors.get("title") %}
+            <p>{{ errors.get("title") }}</p>
+        {% endif %}
+    </div>
+
+
+    <div>
+        <label for="description">
+            Description
+        </label>
+
+        <textarea
+            id="description"
+            name="description"
+            maxlength="2000"
+        >{{ formData.get('description', '') }}</textarea>
+
+        {% if errors.get("description") %}
+            <p>{{ errors.get("description") }}</p>
+        {% endif %}
+    </div>
+
+
+    <button type="submit">
+        Upload Photo
+    </button>
+
+</form>
+
+{% endblock %}

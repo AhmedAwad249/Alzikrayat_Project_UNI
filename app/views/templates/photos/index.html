@@ -1,0 +1,72 @@
+{% extends "layout/base.html" %}
+
+
+{% block title %}
+Photos - Alzikrayat
+{% endblock %}
+
+
+{% block content %}
+
+<h1>Explore Photos</h1>
+
+
+{% if session.get("userId") %}
+
+    <a href="/photo/upload">
+        Upload Photo
+    </a>
+
+{% endif %}
+
+
+{% if photos %}
+
+    <div>
+
+        {% for photo in photos %}
+
+            <article>
+
+                <a href="/photo/{{ photo.id }}">
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='uploads/' ~ photo.file_name
+                        ) }}"
+                        alt="{{ photo.title }}"
+                        width="300"
+                    >
+
+                </a>
+
+                <h2>
+                    {{ photo.title }}
+                </h2>
+
+                <p>
+                    by
+                    {{ photo.first_name }}
+                    {{ photo.last_name }}
+                </p>
+
+                <p>
+                    {{ photo.date_time }}
+                </p>
+
+            </article>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <p>
+        No photos have been uploaded yet.
+    </p>
+
+{% endif %}
+
+{% endblock %}
