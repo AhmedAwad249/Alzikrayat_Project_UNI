@@ -1,11 +1,11 @@
 from app.database.connection import Database
 
 
-class Comment:
-    """Handles raw SQL operations for photo comments."""
+class PhotoTag:
+    """Handles user tags -> photos."""
 
     @staticmethod
-    def create(photoId, userId, comment):
+    def add(photoId, userId):
 
         connection = Database.getConnection()
 
@@ -13,17 +13,15 @@ class Comment:
             with connection.cursor() as cursor:
                 cursor.execute(
                     """
-                    INSERT INTO comments (
+                    INSERT IGNORE INTO photo_tags (
                         photo_id,
-                        user_id,
-                        comment
+                        user_id
                     )
-                    VALUES (%s, %s, %s)
+                    VALUES (%s, %s)
                     """,
                     (
                         photoId,
-                        userId,
-                        comment
+                        userId
                     )
                 )
 
@@ -33,7 +31,8 @@ class Comment:
             connection.close()
 
     @staticmethod
-    def getByPhoto(photoId):
+    def getUsersForPhoto(photoId):
+        """Return registered users tagged in a photo."""
 
         connection = Database.getConnection()
 
@@ -42,21 +41,17 @@ class Comment:
                 cursor.execute(
                     """
                     SELECT
-                        comments.id,
-                        comments.photo_id,
-                        comments.user_id,
-                        comments.comment,
-                        comments.date_time,
+                        users.id,
                         users.first_name,
                         users.last_name
-                    FROM comments
+                    FROM photo_tags
 
                     INNER JOIN users
-                        ON comments.user_id = users.id
+                        ON photo_tags.user_id = users.id
 
-                    WHERE comments.photo_id = %s
+                    WHERE photo_tags.photo_id = %s
 
-                    ORDER BY comments.date_time ASC
+                    ORDER BY users.first_name ASC
                     """,
                     (photoId,)
                 )

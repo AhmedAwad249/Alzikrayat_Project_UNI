@@ -78,3 +78,11 @@ def registerRoutes(app):
     def deletePhoto(photoId):
         from app.controllers.photo_controller import PhotoController
         return PhotoController.delete(photoId)
+
+    @app.route(
+    "/photo/<int:photoId>/like",
+    methods=["POST"]
+    )
+    def toggleLike(photoId):
+        from app.controllers.like_controller import LikeController
+        return LikeController.toggle(photoId)

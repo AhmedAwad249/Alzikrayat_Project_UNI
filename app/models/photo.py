@@ -60,12 +60,38 @@ class Photo:
                         photos.title,
                         photos.description,
                         photos.date_time,
+
                         users.first_name,
-                        users.last_name
+                        users.last_name,
+
+                        COUNT(
+                            DISTINCT photo_likes.user_id
+                        ) AS like_count,
+
+                        COUNT(
+                            DISTINCT comments.id
+                        ) AS comment_count
+
                     FROM photos
 
                     INNER JOIN users
                         ON photos.user_id = users.id
+
+                    LEFT JOIN photo_likes
+                        ON photos.id = photo_likes.photo_id
+
+                    LEFT JOIN comments
+                        ON photos.id = comments.photo_id
+
+                    GROUP BY
+                        photos.id,
+                        photos.user_id,
+                        photos.file_name,
+                        photos.title,
+                        photos.description,
+                        photos.date_time,
+                        users.first_name,
+                        users.last_name
 
                     ORDER BY photos.date_time DESC
                     """

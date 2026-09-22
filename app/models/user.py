@@ -132,3 +132,30 @@ class User:
 
         finally:
             connection.close()
+
+    @staticmethod
+    def getAllExcept(userId):
+        """Return registered users except one specified user."""
+
+        connection = Database.getConnection()
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        first_name,
+                        last_name,
+                        email
+                    FROM users
+                    WHERE id != %s
+                    ORDER BY first_name ASC
+                    """,
+                    (userId,)
+                )
+
+                return cursor.fetchall()
+
+        finally:
+            connection.close()

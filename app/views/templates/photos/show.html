@@ -23,6 +23,41 @@
         alt="{{ photo.title }}"
         width="600"
     >
+    <div>
+
+    {% if session.get("userId") %}
+
+        <form
+            action="/photo/{{ photo.id }}/like"
+            method="POST"
+        >
+
+            <button type="submit">
+
+                {% if likedByCurrentUser %}
+                    ♥ Unlike
+                {% else %}
+                    ♡ Like
+                {% endif %}
+
+            </button>
+
+        </form>
+
+    {% endif %}
+
+
+    <span>
+        {{ likeCount }}
+
+        {% if likeCount == 1 %}
+            like
+        {% else %}
+            likes
+        {% endif %}
+    </span>
+
+</div>
 
 
     <h1>
@@ -73,6 +108,27 @@
     {% endif %}
 
 </article>
+
+{% if taggedUsers %}
+
+    <div>
+
+        <strong>
+            Tagged People:
+        </strong>
+
+        {% for user in taggedUsers %}
+
+            <span>
+                {{ user.first_name }}
+                {{ user.last_name }}
+            </span>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
 
 
 <section id="comments">

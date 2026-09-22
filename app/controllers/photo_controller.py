@@ -10,11 +10,15 @@ from flask import (
     session
 )
 
+
 from werkzeug.utils import secure_filename
 
 from app.models.comment import Comment
 from app.models.photo import Photo
+from app.models.user import User
+from app.models.photo_tag import PhotoTag
 from app.validators.photo_validator import PhotoValidator
+from app.models.photo_like import PhotoLike
 
 
 class PhotoController:
@@ -33,7 +37,7 @@ class PhotoController:
 
     @staticmethod
     def show(photoId):
-        """Display one photo and its comments."""
+        """Display one photo, comments, likes, and tagged users."""
 
         photo = Photo.findById(photoId)
 
@@ -42,24 +46,41 @@ class PhotoController:
 
         comments = Comment.getByPhoto(photoId)
 
+        likeCount = PhotoLike.countByPhoto(photoId)
+
+        likedByCurrentUser = False
+
+        if session.get("userId"):
+            likedByCurrentUser = (
+                PhotoLike.hasLiked(photoId ,session["userId"])
+            )
+
+        taggedUsers = (PhotoTag.getUsersForPhoto(photoId))
+
         return render_template(
             "photos/show.html",
             photo=photo,
             comments=comments,
-            commentErrors={}
+            commentErrors={},
+            likeCount=likeCount,
+            likedByCurrentUser=likedByCurrentUser,
+            taggedUsers=taggedUsers
         )
 
     @staticmethod
     def showUpload():
-        """Display the photo upload form."""
+        """Display photo upload form."""
 
         if not session.get("userId"):
             return redirect("/login")
 
+        users = User.getAllExcept(session["userId"])
+
         return render_template(
             "photos/create.html",
             errors={},
-            formData={}
+            formData={},
+            users=users
         )
 
     @staticmethod
@@ -79,6 +100,7 @@ class PhotoController:
             "description",
             ""
         ).strip()
+        
 
         errors = PhotoValidator.validateUpload(
             photoFile,
@@ -87,13 +109,14 @@ class PhotoController:
         )
 
         if errors:
+            users = User.getAllExcept(session["userId"])
             return render_template(
                 "photos/create.html",
                 errors=errors,
                 formData={
                     "title": title,
-                    "description": description
-                }
+                    "description": description},
+                    users=users
             )
 
         originalName = secure_filename(
@@ -126,12 +149,24 @@ class PhotoController:
 
         photoFile.save(filePath)
 
-        Photo.create(
+        photoId = Photo.create(
             userId=session["userId"],
             fileName=fileName,
             title=title,
             description=description or None
         )
+
+        allowedUsers = User.getAllExcept(session["userId"])
+        allowedUserIds = {str(user["id"])for user in allowedUsers}
+
+        taggedUsers = request.form.getlist("taggedUsers")
+
+        for taggedUserId in taggedUsers:
+
+            if taggedUserId not in allowedUserIds:
+                continue
+
+            PhotoTag.add( photoId=photoId ,userId=int(taggedUserId) )
 
         return redirect("/photos")
 
@@ -142,14 +177,9 @@ class PhotoController:
         if not session.get("userId"):
             return redirect("/login")
 
-        photos = Photo.getByUser(
-            session["userId"]
-        )
+        photos = Photo.getByUser(session["userId"])
 
-        return render_template(
-            "photos/my_photos.html",
-            photos=photos
-        )
+        return render_template("photos/my_photos.html",photos=photos)
 
     @staticmethod
     def delete(photoId):

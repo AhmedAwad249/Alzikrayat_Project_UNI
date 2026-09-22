@@ -56,10 +56,18 @@ Photos - Alzikrayat
                 </p>
 
             </article>
+            <p>
+                ♡ {{ photo.like_count }}
+                ·
+                {{ photo.comment_count }} comments
+                ·
+                {{ photo.date_time | timeAgo }}
+            </p>
 
         {% endfor %}
 
     </div>
+    
 
 {% else %}
 

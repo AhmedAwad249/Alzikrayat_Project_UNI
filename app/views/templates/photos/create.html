@@ -71,7 +71,40 @@ Upload Photo - Alzikrayat
         {% endif %}
     </div>
 
+<div>
 
+    <label>
+        Tag People
+    </label>
+
+    {% if users %}
+
+        {% for user in users %}
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="taggedUsers"
+                    value="{{ user.id }}"
+                >
+
+                {{ user.first_name }}
+                {{ user.last_name }}
+
+            </label>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            No other registered users yet.
+        </p>
+
+    {% endif %}
+
+</div>
     <button type="submit">
         Upload Photo
     </button>
