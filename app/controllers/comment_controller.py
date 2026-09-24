@@ -8,6 +8,8 @@ from flask import (
 
 from app.models.comment import Comment
 from app.models.photo import Photo
+from app.models.photo_like import PhotoLike
+from app.models.photo_tag import PhotoTag
 from app.validators.comment_validator import CommentValidator
 
 
@@ -40,7 +42,10 @@ class CommentController:
                 "photos/show.html",
                 photo=photo,
                 comments=comments,
-                commentErrors=errors
+                commentErrors=errors,
+                likeCount=PhotoLike.countByPhoto(photoId),
+                likedByCurrentUser=PhotoLike.hasLiked(photoId, session["userId"]),
+                taggedUsers=PhotoTag.getUsersForPhoto(photoId)
             ), 400
 
         Comment.create(

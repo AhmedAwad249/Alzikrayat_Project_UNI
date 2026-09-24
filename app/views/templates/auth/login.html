@@ -1,95 +1,51 @@
 {% extends "layout/base.html" %}
 
-{% block title %}
-Login - Alzikrayat
-{% endblock %}
-
+{% block title %}Log in - Alzikrayat{% endblock %}
 
 {% block content %}
-
-<h1>Welcome Back</h1>
-
-<p>
-    Login to your account.
-</p>
-
-
-{% if lastLogin %}
-
-    <p>
-        Last login from this computer was:
-        <strong>{{ lastLogin | timeAgo }}</strong>
-    </p>
-
-{% endif %}
-
-
-{% if errors.get("login") %}
-
-    <p>
-        {{ errors.get("login") }}
-    </p>
-
-{% endif %}
-
-
-<form
-    id="loginForm"
-    action="/login"
-    method="POST"
->
-
-    <div>
-        <label for="loginEmail">
-            Email
-        </label>
-
-        <input
-            id="loginEmail"
-            name="email"
-            type="email"
-            maxlength="100"
-            value="{{ formData.get('email', '') }}"
-            required
-        >
-
-        {% if errors.get("email") %}
-            <p>{{ errors.get("email") }}</p>
-        {% endif %}
+<section class="auth-page">
+    <div class="auth-intro">
+        <h1>Log in</h1>
     </div>
 
-
-    <div>
-        <label for="loginPassword">
-            Password
-        </label>
-
-        <input
-            id="loginPassword"
-            name="password"
-            type="password"
-            required
-        >
-
-        {% if errors.get("password") %}
-            <p>{{ errors.get("password") }}</p>
+    <div class="form-card auth-card">
+        {% if lastLogin %}
+            <div class="notice">
+                Last login from this computer was
+                <strong><time datetime="{{ lastLogin }}">{{ lastLogin | replace('T', ' ') | replace('+00:00', ' UTC') }}</time></strong>.
+            </div>
         {% endif %}
+
+        {% if errors.get('login') %}
+            <p class="form-alert" role="alert">{{ errors.get('login') }}</p>
+        {% endif %}
+
+        <form id="loginForm" action="/login" method="POST">
+            <div class="field">
+                <label for="loginEmail">Email address</label>
+                <input id="loginEmail" name="email" type="email" maxlength="100"
+                       autocomplete="email" value="{{ formData.get('email', '') }}"
+                       aria-invalid="{{ 'true' if errors.get('email') else 'false' }}" required>
+                {% if errors.get('email') %}
+                    <p class="field-error" role="alert">{{ errors.get('email') }}</p>
+                {% endif %}
+            </div>
+
+            <div class="field">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" name="password" type="password"
+                       autocomplete="current-password"
+                       aria-invalid="{{ 'true' if errors.get('password') else 'false' }}" required>
+                {% if errors.get('password') %}
+                    <p class="field-error" role="alert">{{ errors.get('password') }}</p>
+                {% endif %}
+            </div>
+
+            <button class="button button-dark form-submit" type="submit">
+                Log in <span aria-hidden="true">↗</span>
+            </button>
+        </form>
+        <p class="form-switch">New to Alzikrayat? <a href="/register">Create an account</a></p>
     </div>
-
-
-    <button type="submit">
-        Login
-    </button>
-
-</form>
-
-
-<p>
-    Don't have an account?
-
-    <a href="/register">
-        Register
-    </a>
-</p>
-
+</section>
 {% endblock %}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 440" role="img" aria-labelledby="title">
+  <title id="title">Simple landscape</title>
+  <rect width="640" height="440" rx="12" fill="#efede5"/>
+  <circle cx="465" cy="115" r="48" fill="#d8c39d"/>
+  <path d="M0 330 170 200 345 330Z" fill="#b8c1ae"/>
+  <path d="M170 440 425 190 640 405V440Z" fill="#8e9c87"/>
+  <path d="M0 365C150 320 290 340 420 390C515 425 585 405 640 375V440H0Z" fill="#71816f"/>
+</svg>

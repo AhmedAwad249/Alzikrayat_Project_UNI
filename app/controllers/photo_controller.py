@@ -177,9 +177,19 @@ class PhotoController:
         if not session.get("userId"):
             return redirect("/login")
 
+        user = User.findById(session["userId"])
+
+        if not user:
+            session.clear()
+            return redirect("/login")
+
         photos = Photo.getByUser(session["userId"])
 
-        return render_template("photos/my_photos.html",photos=photos)
+        return render_template(
+            "photos/my_photos.html",
+            photos=photos,
+            user=user
+        )
 
     @staticmethod
     def delete(photoId):

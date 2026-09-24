@@ -1,114 +1,78 @@
 {% extends "layout/base.html" %}
 
-
-{% block title %}
-Upload Photo - Alzikrayat
-{% endblock %}
-
+{% block title %}Upload a photo - Alzikrayat{% endblock %}
 
 {% block content %}
-
-<h1>Upload a New Photo</h1>
-
-<form
-    action="/photo/store"
-    method="POST"
-    enctype="multipart/form-data"
->
-
-    <div>
-        <label for="photo">
-            Image
-        </label>
-
-        <input
-            id="photo"
-            name="photo"
-            type="file"
-            accept=".jpg,.jpeg,.png,.webp"
-            required
-        >
-
-        {% if errors.get("photo") %}
-            <p>{{ errors.get("photo") }}</p>
-        {% endif %}
+<section class="upload-page">
+    <div class="page-intro">
+        <h1>Upload a photo</h1>
     </div>
 
+    <form id="uploadForm" action="/photo/store" method="POST"
+          enctype="multipart/form-data" class="upload-layout row g-4">
+        <div class="col-lg-5">
+            <div class="form-card upload-image-card">
+                <label for="photo" class="drop-zone">
+                    <span class="upload-symbol" aria-hidden="true">↑</span>
+                    <strong>Choose a photo</strong>
+                    <span>JPG, PNG or WEBP</span>
+                    <img id="photoPreview" alt="Selected photo preview" hidden>
+                </label>
+                <input id="photo" class="file-input" name="photo" type="file"
+                       accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                       aria-invalid="{{ 'true' if errors.get('photo') else 'false' }}" required>
+                {% if errors.get('photo') %}
+                    <p class="field-error" role="alert">{{ errors.get('photo') }}</p>
+                {% endif %}
+            </div>
+        </div>
 
-    <div>
-        <label for="title">
-            Title
-        </label>
+        <div class="col-lg-7">
+            <div class="form-card upload-fields">
+                <div class="field">
+                    <label for="title">Photo title</label>
+                    <input id="title" name="title" type="text" maxlength="200"
+                           value="{{ formData.get('title', '') }}"
+                           placeholder="Give this moment a name"
+                           aria-invalid="{{ 'true' if errors.get('title') else 'false' }}" required>
+                    {% if errors.get('title') %}
+                        <p class="field-error" role="alert">{{ errors.get('title') }}</p>
+                    {% endif %}
+                </div>
 
-        <input
-            id="title"
-            name="title"
-            type="text"
-            maxlength="200"
-            value="{{ formData.get('title', '') }}"
-            required
-        >
+                <div class="field">
+                    <label for="description">Description <span class="optional-label">(optional)</span></label>
+                    <textarea id="description" name="description" rows="6" maxlength="2000"
+                              placeholder="Write a short description">{{ formData.get('description', '') }}</textarea>
+                    {% if errors.get('description') %}
+                        <p class="field-error" role="alert">{{ errors.get('description') }}</p>
+                    {% endif %}
+                </div>
 
-        {% if errors.get("title") %}
-            <p>{{ errors.get("title") }}</p>
-        {% endif %}
-    </div>
+                <fieldset class="tag-field">
+                    <legend>Tag people <span class="optional-label">(optional)</span></legend>
+                    {% if users %}
+                        <div class="tag-list">
+                            {% for user in users %}
+                                <label class="tag-choice">
+                                    <input type="checkbox" name="taggedUsers" value="{{ user.id }}">
+                                    <span>{{ user.first_name }} {{ user.last_name }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>No other members to tag yet.</p>
+                    {% endif %}
+                </fieldset>
 
-
-    <div>
-        <label for="description">
-            Description
-        </label>
-
-        <textarea
-            id="description"
-            name="description"
-            maxlength="2000"
-        >{{ formData.get('description', '') }}</textarea>
-
-        {% if errors.get("description") %}
-            <p>{{ errors.get("description") }}</p>
-        {% endif %}
-    </div>
-
-<div>
-
-    <label>
-        Tag People
-    </label>
-
-    {% if users %}
-
-        {% for user in users %}
-
-            <label>
-
-                <input
-                    type="checkbox"
-                    name="taggedUsers"
-                    value="{{ user.id }}"
-                >
-
-                {{ user.first_name }}
-                {{ user.last_name }}
-
-            </label>
-
-        {% endfor %}
-
-    {% else %}
-
-        <p>
-            No other registered users yet.
-        </p>
-
-    {% endif %}
-
-</div>
-    <button type="submit">
-        Upload Photo
-    </button>
-
-</form>
-
+                <div class="upload-actions">
+                    <a class="button button-outline" href="/photos">Cancel</a>
+                    <button class="button button-dark" type="submit">
+                        Share photo <span aria-hidden="true">↗</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
 {% endblock %}

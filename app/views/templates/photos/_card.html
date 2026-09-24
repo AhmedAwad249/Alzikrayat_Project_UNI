@@ -1,0 +1,30 @@
+<article class="photo-card">
+    <a class="photo-image" href="/photo/{{ photo.id }}" aria-label="View {{ photo.title }}">
+        <img src="{{ url_for('static', filename='uploads/' ~ photo.file_name) }}"
+             alt="{{ photo.title }}" loading="lazy">
+        <span class="image-fallback" aria-hidden="true">Photo unavailable</span>
+    </a>
+
+    <div class="photo-info">
+        <div class="photo-main">
+            <h3><a href="/photo/{{ photo.id }}">{{ photo.title }}</a></h3>
+            {% if myPage or profilePage %}
+                <p>Shared {{ photo.date_time | timeAgo }}</p>
+            {% else %}
+                <p>by <a class="author-link" href="/user/{{ photo.user_id }}">{{ photo.first_name }} {{ photo.last_name }}</a> · {{ photo.date_time | timeAgo }}</p>
+            {% endif %}
+        </div>
+
+        {% if myPage %}
+            <form class="delete-form" action="/photo/{{ photo.id }}/delete" method="POST"
+                  data-confirm="Delete this photo? This cannot be undone.">
+                <button class="small-action danger-action" type="submit">Delete</button>
+            </form>
+        {% elif not profilePage %}
+            <div class="photo-counts">
+                <span>{{ photo.like_count }} <span class="count-label">likes</span></span>
+                <span>{{ photo.comment_count }} <span class="count-label">comments</span></span>
+            </div>
+        {% endif %}
+    </div>
+</article>

@@ -54,6 +54,23 @@ class User:
             connection.close()
 
     @staticmethod
+    def getAll():
+        """Return the basic public information for all members."""
+
+        connection = Database.getConnection()
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT id, first_name, last_name, location, occupation
+                    FROM users
+                    ORDER BY first_name, last_name
+                """)
+                return cursor.fetchall()
+        finally:
+            connection.close()
+
+    @staticmethod
     def findByEmail(email):
         """Find a user by email address."""
 

@@ -6,6 +6,12 @@ def registerRoutes(app):
         from app.controllers.home_controller import HomeController
         return HomeController.index()
 
+    @app.route("/about", methods=["GET"])
+    def about():
+        """Show the short description of the project."""
+        from flask import render_template
+        return render_template("about.html")
+
     @app.route("/register", methods=["GET"])
     def registerForm():
         from app.controllers.auth_controller import AuthController
@@ -36,6 +42,18 @@ def registerRoutes(app):
     def photos():
         from app.controllers.photo_controller import PhotoController
         return PhotoController.index()
+
+    @app.route("/users", methods=["GET"])
+    def users():
+        """Show the member list."""
+        from app.controllers.user_controller import UserController
+        return UserController.index()
+
+    @app.route("/user/<int:userId>", methods=["GET"])
+    def userProfile(userId):
+        """Show a member's public profile."""
+        from app.controllers.user_controller import UserController
+        return UserController.show(userId)
 
 
     @app.route("/photo/upload", methods=["GET"])

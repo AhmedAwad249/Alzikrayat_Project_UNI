@@ -1,36 +1,47 @@
 {% extends "layout/base.html" %}
 
-{% block title %}
-Alzikrayat
-{% endblock %}
-
+{% block title %}Alzikrayat{% endblock %}
 
 {% block content %}
+<section class="home-hero row align-items-center g-4">
+    <div class="col-lg-6">
+        <h1>Share your memories.</h1>
+        <p class="hero-copy">A simple place for photos and stories.</p>
+        <div class="hero-actions">
+            <a class="button button-dark" href="/photos">Browse photos</a>
+            {% if session.get('userId') %}
+                <a class="button button-outline" href="/photo/upload">Upload a photo</a>
+            {% else %}
+                <a class="button button-outline" href="/register">Sign up</a>
+            {% endif %}
+        </div>
+        <p class="home-counts">{{ photoCount }} photos · {{ userCount }} members</p>
+    </div>
+    <div class="col-lg-6">
+        <img class="hero-picture" src="{{ url_for('static', filename='images/hero.svg') }}"
+             alt="Simple landscape illustration">
+    </div>
+</section>
 
-<h1>Alzikrayat</h1>
+<section class="home-section">
+    <div class="section-heading">
+        <h2>Recent photos</h2>
+        <a class="inline-link" href="/photos">View all</a>
+    </div>
 
-<p>
-    Share your memories.
-</p>
-
-<p>
-    {{ userCount }} registered users
-</p>
-
-
-{% if session.get("userId") %}
-
-    <p>
-        Welcome back,
-        {{ session.get("firstName") }}.
-    </p>
-
-{% else %}
-
-    <a href="/register">
-        Get Started
-    </a>
-
-{% endif %}
-
+    {% if latestPhotos %}
+        <div class="gallery-grid gallery-three">
+            {% for photo in latestPhotos %}
+                {% include "photos/_card.html" %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-panel">
+            <h3>No photos yet.</h3>
+            <a class="button button-dark" href="{{ '/photo/upload' if session.get('userId') else '/register' }}">
+                Add a photo
+            </a>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

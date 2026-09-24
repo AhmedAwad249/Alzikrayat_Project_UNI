@@ -1,224 +1,126 @@
 {% extends "layout/base.html" %}
 
-
-{% block title %}
-{{ photo.title }} - Alzikrayat
-{% endblock %}
-
+{% block title %}{{ photo.title }} - Alzikrayat{% endblock %}
 
 {% block content %}
-
-<a href="/photos">
-    Back to Photos
-</a>
-
-
-<article>
-
-    <img
-        src="{{ url_for(
-            'static',
-            filename='uploads/' ~ photo.file_name
-        ) }}"
-        alt="{{ photo.title }}"
-        width="600"
-    >
-    <div>
-
-    {% if session.get("userId") %}
-
-        <form
-            action="/photo/{{ photo.id }}/like"
-            method="POST"
-        >
-
-            <button type="submit">
-
-                {% if likedByCurrentUser %}
-                    ♥ Unlike
-                {% else %}
-                    ♡ Like
-                {% endif %}
-
-            </button>
-
-        </form>
-
-    {% endif %}
-
-
-    <span>
-        {{ likeCount }}
-
-        {% if likeCount == 1 %}
-            like
-        {% else %}
-            likes
-        {% endif %}
-    </span>
-
-</div>
-
-
-    <h1>
-        {{ photo.title }}
-    </h1>
-
-
-    <p>
-        Uploaded by
-        {{ photo.first_name }}
-        {{ photo.last_name }}
-    </p>
-
-
-    <time
-        datetime="{{ photo.date_time }}"
-        title="{{ photo.date_time }}"
-    >
-        {{ photo.date_time | timeAgo }}
-    </time>
-
-
-    {% if photo.description %}
-
-        <p>
-            {{ photo.description }}
-        </p>
-
-    {% endif %}
-
-
-    {% if
-        session.get("userId")
-        == photo.user_id
-    %}
-
-        <form
-            action="/photo/{{ photo.id }}/delete"
-            method="POST"
-        >
-
-            <button type="submit">
-                Delete Photo
-            </button>
-
-        </form>
-
-    {% endif %}
-
-</article>
-
-{% if taggedUsers %}
-
-    <div>
-
-        <strong>
-            Tagged People:
-        </strong>
-
-        {% for user in taggedUsers %}
-
-            <span>
-                {{ user.first_name }}
-                {{ user.last_name }}
-            </span>
-
-        {% endfor %}
-
-    </div>
-
-{% endif %}
-
-
-<section id="comments">
-
-    <h2>
-        Comments
-    </h2>
-
-    {% if session.get("userId") %}
-
-        <form
-            class="commentForm"
-            action="/photo/{{ photo.id }}/comment"
-            method="POST"
-        >
-
-            <textarea
-                name="comment"
-                maxlength="1000"
-                placeholder="Write a comment..."
-                required
-            ></textarea>
-
-            {% if commentErrors.get("comment") %}
-
-                <p>
-                    {{ commentErrors.get("comment") }}
-                </p>
-
-            {% endif %}
-
-            <button type="submit">
-                Post Comment
-            </button>
-
-        </form>
-
-    {% else %}
-
-        <p>
-            <a href="/login">
-                Login
-            </a>
-            to write a comment.
-        </p>
-
-    {% endif %}
-
-    {% if comments %}
-
-        <div>
-
-            {% for item in comments %}
-
-                <article>
-
-                    <div>
-
-                        <strong>
-                            {{ item.first_name }}
-                            {{ item.last_name }}
-                        </strong>
-
-                        <time
-                            datetime="{{ item.date_time }}"
-                            title="{{ item.date_time }}"
-                        >
-                            {{ item.date_time | timeAgo }}
-                        </time>
-
-                    </div>
-
-                    <p>
-                        {{ item.comment }}
-                    </p>
-
-                </article>
-
-            {% endfor %}
-
+<section class="detail-page">
+    <a class="back-link" href="/photos"><span aria-hidden="true">←</span> Back to gallery</a>
+
+    <div class="detail-layout row g-4">
+        <div class="col-lg-7">
+            <div class="detail-image">
+                <img src="{{ url_for('static', filename='uploads/' ~ photo.file_name) }}"
+                     alt="{{ photo.title }}">
+                <span class="image-fallback" aria-hidden="true">Photo unavailable</span>
+            </div>
         </div>
 
-    {% else %}
+        <div class="col-lg-5">
+            <div class="detail-copy">
+                <h1>{{ photo.title }}</h1>
+                <div class="detail-byline">
+                    <span class="avatar" aria-hidden="true">{{ photo.first_name[0] }}</span>
+                    <div>
+                        <a class="author-link" href="/user/{{ photo.user_id }}">
+                            <strong>{{ photo.first_name }} {{ photo.last_name }}</strong>
+                        </a>
+                        <time datetime="{{ photo.date_time }}" title="{{ photo.date_time }}">
+                            {{ photo.date_time | timeAgo }}
+                        </time>
+                    </div>
+                </div>
 
-        <p>
-            No comments yet.
-        </p>
+                {% if photo.description %}
+                    <p class="detail-story">{{ photo.description }}</p>
+                {% endif %}
 
-    {% endif %}
+                {% if taggedUsers %}
+                    <div class="tagged-people">
+                        <strong>With</strong>
+                        {% for user in taggedUsers %}
+                            <a href="/user/{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
+                <div class="detail-actions">
+                    {% if session.get('userId') %}
+                        <form action="/photo/{{ photo.id }}/like" method="POST">
+                            <button class="button {% if likedByCurrentUser %}button-dark{% else %}button-outline{% endif %}"
+                                    type="submit"
+                                    aria-label="{{ 'Unlike' if likedByCurrentUser else 'Like' }} {{ photo.title }}">
+                                <svg viewBox="0 0 24 24" width="19" height="19"
+                                     fill="{% if likedByCurrentUser %}currentColor{% else %}none{% endif %}"
+                                     stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-1 1-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/>
+                                </svg>
+                                {{ 'Liked' if likedByCurrentUser else 'Like' }}
+                            </button>
+                        </form>
+                    {% endif %}
+                    <span>{{ likeCount }} {{ 'like' if likeCount == 1 else 'likes' }}</span>
+                </div>
+
+                {% if session.get('userId') == photo.user_id %}
+                    <form class="delete-form" action="/photo/{{ photo.id }}/delete"
+                          method="POST" data-confirm="Delete this photo? This cannot be undone.">
+                        <button class="small-action danger-action" type="submit">Delete this photo</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <section class="comments-section" id="comments">
+        <div class="section-heading">
+            <div>
+                <h2>Comments <span class="comment-total">{{ comments | length }}</span></h2>
+            </div>
+        </div>
+
+        {% if session.get('userId') %}
+            <form class="comment-form form-card" action="/photo/{{ photo.id }}/comment" method="POST">
+                <div class="field">
+                    <label for="comment">Add a comment</label>
+                    <textarea id="comment" name="comment" rows="3" maxlength="1000"
+                              placeholder="Write a comment..."
+                              aria-invalid="{{ 'true' if commentErrors.get('comment') else 'false' }}" required></textarea>
+                    {% if commentErrors.get('comment') %}
+                        <p class="field-error" role="alert">{{ commentErrors.get('comment') }}</p>
+                    {% endif %}
+                </div>
+                <div class="comment-submit">
+                    <button class="button button-dark" type="submit">Post comment</button>
+                </div>
+            </form>
+        {% else %}
+            <div class="login-to-comment">
+                <a href="/login">Log in to comment</a>.
+            </div>
+        {% endif %}
+
+        {% if comments %}
+            <div class="comment-list">
+                {% for item in comments %}
+                    <article class="comment">
+                        <span class="avatar" aria-hidden="true">{{ item.first_name[0] }}</span>
+                        <div>
+                            <div class="comment-meta">
+                                <a class="author-link" href="/user/{{ item.user_id }}">
+                                    <strong>{{ item.first_name }} {{ item.last_name }}</strong>
+                                </a>
+                                <time datetime="{{ item.date_time }}" title="{{ item.date_time }}">
+                                    {{ item.date_time | timeAgo }}
+                                </time>
+                            </div>
+                            <p>{{ item.comment }}</p>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-comments">No comments yet.</p>
+        {% endif %}
+    </section>
 </section>
-
 {% endblock %}

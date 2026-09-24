@@ -1,0 +1,31 @@
+{% extends "layout/base.html" %}
+
+{% block title %}People - Alzikrayat{% endblock %}
+
+{% block content %}
+<section class="gallery-page">
+    <div class="page-intro">
+        <h1>People</h1>
+    </div>
+
+    {% if users %}
+        <div class="people-grid">
+            {% for user in users %}
+                <a class="person-card" href="/user/{{ user.id }}">
+                    <span class="profile-avatar" aria-hidden="true">{{ user.first_name[0] }}</span>
+                    <span class="person-info">
+                        <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                        {% if user.occupation or user.location %}
+                            <small>{{ user.occupation or user.location }}</small>
+                        {% endif %}
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-panel">
+            <h2>No members yet.</h2>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

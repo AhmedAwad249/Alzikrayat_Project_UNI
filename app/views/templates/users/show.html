@@ -1,15 +1,16 @@
 {% extends "layout/base.html" %}
 
-{% block title %}My profile - Alzikrayat{% endblock %}
+{% block title %}{{ user.first_name }} {{ user.last_name }} - Alzikrayat{% endblock %}
 
 {% block content %}
-{% set myPage = true %}
+{% set profilePage = true %}
 <section class="gallery-page">
+    <a class="back-link" href="/users"><span aria-hidden="true">←</span> Back to people</a>
+
     <div class="profile-card">
         <span class="profile-avatar" aria-hidden="true">{{ user.first_name[0] }}</span>
         <div class="profile-details">
             <h1>{{ user.first_name }} {{ user.last_name }}</h1>
-            <p class="profile-email">{{ user.email }}</p>
             {% if user.location or user.occupation %}
                 <div class="profile-meta">
                     {% if user.location %}<span>Location: {{ user.location }}</span>{% endif %}
@@ -20,13 +21,8 @@
         </div>
     </div>
 
-    <div class="page-intro intro-with-action">
-        <h2 class="my-photos-heading">My photos</h2>
-        <a class="button button-dark" href="/photo/upload">Add a photo <span aria-hidden="true">↗</span></a>
-    </div>
-
-    <div class="gallery-toolbar">
-        <strong>{{ photos | length }} {{ 'photo' if photos | length == 1 else 'photos' }} shared</strong>
+    <div class="page-intro">
+        <h2 class="my-photos-heading">Photos <span class="profile-photo-count">{{ photos | length }}</span></h2>
     </div>
 
     {% if photos %}
@@ -37,9 +33,7 @@
         </div>
     {% else %}
         <div class="empty-panel">
-            <span class="empty-icon" aria-hidden="true">+</span>
             <h2>No photos yet.</h2>
-            <a class="button button-dark" href="/photo/upload">Upload a photo</a>
         </div>
     {% endif %}
 </section>

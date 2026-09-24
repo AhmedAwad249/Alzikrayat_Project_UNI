@@ -1,80 +1,48 @@
 {% extends "layout/base.html" %}
 
-
-{% block title %}
-Photos - Alzikrayat
-{% endblock %}
-
+{% block title %}Community gallery - Alzikrayat{% endblock %}
 
 {% block content %}
-
-<h1>Explore Photos</h1>
-
-
-{% if session.get("userId") %}
-
-    <a href="/photo/upload">
-        Upload Photo
-    </a>
-
-{% endif %}
-
-
-{% if photos %}
-
-    <div>
-
-        {% for photo in photos %}
-
-            <article>
-
-                <a href="/photo/{{ photo.id }}">
-
-                    <img
-                        src="{{ url_for(
-                            'static',
-                            filename='uploads/' ~ photo.file_name
-                        ) }}"
-                        alt="{{ photo.title }}"
-                        width="300"
-                    >
-
-                </a>
-
-                <h2>
-                    {{ photo.title }}
-                </h2>
-
-                <p>
-                    by
-                    {{ photo.first_name }}
-                    {{ photo.last_name }}
-                </p>
-
-                <p>
-                    {{ photo.date_time | timeAgo }}
-                </p>
-
-            </article>
-            <p>
-                ♡ {{ photo.like_count }}
-                ·
-                {{ photo.comment_count }} comments
-                ·
-                {{ photo.date_time | timeAgo }}
-            </p>
-
-        {% endfor %}
-
+<section class="gallery-page">
+    <div class="page-intro">
+        <h1>Gallery</h1>
     </div>
-    
 
-{% else %}
+    <div class="gallery-toolbar">
+        <strong>{{ photos | length }} shared {{ 'memory' if photos | length == 1 else 'memories' }}</strong>
+        {% if photos %}
+            <div class="view-switch desktop-switch" role="group" aria-label="Gallery layout">
+                <button class="view-button active" type="button" data-view="three" aria-pressed="true">3 columns</button>
+                <button class="view-button" type="button" data-view="four" aria-pressed="false">4 columns</button>
+                <button class="view-button" type="button" data-view="list" aria-pressed="false">List</button>
+            </div>
+            <div class="view-switch mobile-switch" role="group" aria-label="Gallery layout">
+                <button class="view-button active" type="button" data-view="cards" aria-pressed="true">Cards</button>
+                <button class="view-button" type="button" data-view="list" aria-pressed="false">List</button>
+            </div>
+        {% endif %}
+    </div>
 
-    <p>
-        No photos have been uploaded yet.
-    </p>
-
-{% endif %}
-
+    {% if photos %}
+        <div class="gallery-grid gallery-three" id="galleryGrid">
+            {% if session.get('userId') %}
+                <a class="add-photo-card" href="/photo/upload">
+                    <span class="add-icon" aria-hidden="true">+</span>
+                    <strong>Add a photo</strong>
+                </a>
+            {% endif %}
+            {% for photo in photos %}
+                {% include "photos/_card.html" %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-panel">
+            <span class="empty-icon" aria-hidden="true">+</span>
+            <h2>No photos yet.</h2>
+            <a class="button button-dark" href="{{ '/photo/upload' if session.get('userId') else '/register' }}">
+                {{ 'Add a photo' if session.get('userId') else 'Join to share a photo' }}
+            </a>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}
