@@ -94,7 +94,7 @@ class PhotoController:
         title = request.form.get(
             "title",
             ""
-        ).strip()
+        ).strip() 
 
         description = request.form.get(
             "description",
@@ -127,7 +127,7 @@ class PhotoController:
             ".",
             1
         )[1].lower()
-
+    
         fileName = (
             f"{uuid.uuid4().hex}.{extension}"
         )
